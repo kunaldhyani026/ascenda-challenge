@@ -37,7 +37,7 @@ class SupplierApiClient
       return { error_body: { code: 500, message: 'Internal Server Error', type: 'http_network_error' } }
     end
 
-    return { error_body: { code: response.code.to_i, message: response.body } } unless response.code.to_i == 200
+    return { error_body: { code: response.code.to_i, message: response.body, type: 'api_error' } } unless response.code.to_i == 200
 
     JSON.parse(response.read_body)
   end

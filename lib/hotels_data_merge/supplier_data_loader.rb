@@ -37,6 +37,7 @@ module HotelsDataMerge
 
         process_response(response, supplier)
       end
+      Rails.cache.write('hotels', {})
       @hotel_ids.each { |hotel_id| save_hotel(hotel_id) }
       { success_body: { code: 200, message: 'ok' } }
     end
@@ -54,11 +55,13 @@ module HotelsDataMerge
 
     def save_hotel(hotel_id)
       @suppliers.each do |_supplier_id, supplier_hotels|
-        saved_hotel = Rails.cache.read(hotel_id)
+        saved_hotels = Rails.cache.read('hotels')
+        saved_hotel = saved_hotels[hotel_id]
         matched_supplier_hotel = supplier_hotels.find{ |hotel| hotel.get_id == hotel_id }
         if matched_supplier_hotel
           merged_hotel = merge_hotels(saved_hotel, matched_supplier_hotel, hotel_id)
-          Rails.cache.write(hotel_id, merged_hotel)
+          saved_hotels[hotel_id] = merged_hotel
+          Rails.cache.write('hotels', saved_hotels)
         end
       end
     end
