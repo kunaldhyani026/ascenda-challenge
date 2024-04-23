@@ -1,7 +1,7 @@
 module HotelsDataMerge
   module HotelEntities
     class Location
-      attr_accessor :address, :city, :country, :latitude, :longitude
+      attr_accessor :address, :city, :country, :lat, :lng
     end
   end
 end

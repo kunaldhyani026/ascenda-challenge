@@ -45,8 +45,8 @@ module HotelsDataMerge
         location.address = "#{strip_or_empty(@hotel_data[:Address])} #{strip_or_empty(@hotel_data[:PostalCode])}"
         location.city = strip_or_empty(@hotel_data[:City])
         location.country = strip_or_empty(@hotel_data[:Country])
-        location.latitude = @hotel_data[:Latitude]
-        location.longitude = @hotel_data[:Longitude]
+        location.lat = @hotel_data[:Latitude]
+        location.lng = @hotel_data[:Longitude]
         location
       end
     end

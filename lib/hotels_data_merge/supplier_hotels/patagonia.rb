@@ -49,8 +49,8 @@ module HotelsDataMerge
       def get_location
         location = HotelsDataMerge::HotelEntities::Location.new
         location.address = strip_or_empty(@hotel_data[:address])
-        location.latitude = @hotel_data[:lat]
-        location.longitude = @hotel_data[:lng]
+        location.lat = @hotel_data[:lat]
+        location.lng = @hotel_data[:lng]
         location
       end
     end

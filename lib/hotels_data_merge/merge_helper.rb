@@ -20,8 +20,8 @@ module HotelsDataMerge
 
       location.address = saved_hotel.location.address.presence || supplier_hotel_location.address.presence
       location.city = saved_hotel.location.city.presence || supplier_hotel_location.city.presence
-      location.latitude = saved_hotel.location.latitude.presence || supplier_hotel_location.latitude.presence
-      location.longitude = saved_hotel.location.longitude.presence || supplier_hotel_location.longitude.presence
+      location.lat = saved_hotel.location.lat.presence || supplier_hotel_location.lat.presence
+      location.lng = saved_hotel.location.lng.presence || supplier_hotel_location.lng.presence
       location.country = saved_hotel.location.country.present? && supplier_hotel_location.country.present? ? select_string_of_specified_length(saved_hotel.location.country, supplier_hotel_location.country, 2) : saved_hotel.location.country.presence || supplier_hotel_location.country.presence
       location
     end
