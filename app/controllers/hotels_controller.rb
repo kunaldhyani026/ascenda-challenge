@@ -8,8 +8,15 @@ class HotelsController < ApplicationController
   # else the result is either based off hotels ids or destination param.
   # In case of any types of bad request inputs, the method validate_params handles that before actual search method is called.
   def search
-    response = HotelsDataMerge::SupplierDataLoader.new.procure_data
-    return render_error(response[:error_body][:code], response[:error_body][:type], response[:error_body][:message], response[:error_body][:code]) if response.has_key?(:error_body)
+    # For optimization, we are caching the supplier hotel data for 24 hours - Cached data is updated after 24 hours next time anyone hits search API call.
+    # As per config, if use_cached_supplier_data is set to true and cached data is not older than 24 hours\n
+    # we use cached data and avoid call to fetch data from supplier for every search API call.
+    # If we want to fetch data freshly from supplier for every search API call, then set use_cached_supplier_data to false.
+    unless Rails.application.config.use_cached_supplier_data && Rails.cache.read('hotels').present?
+      response = HotelsDataMerge::SupplierDataLoader.new.procure_data
+      # If API fails to fetch data from supplier, user is notified with 5xx, Internal Server Error.
+      return render_error(response[:error_body][:code], response[:error_body][:type], response[:error_body][:message], response[:error_body][:code]) if response.has_key?(:error_body)
+    end
 
     if params[:hotels].present?
       find_hotels_by_id

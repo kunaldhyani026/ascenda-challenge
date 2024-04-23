@@ -37,12 +37,18 @@ module HotelsDataMerge
 
         process_response(response, supplier)
       end
-      Rails.cache.write('hotels', {})
-      @hotel_ids.each { |hotel_id| save_hotel(hotel_id) }
+      process_and_write_to_cache
       { success_body: { code: 200, message: 'ok' } }
     end
 
     private
+
+    def process_and_write_to_cache
+      Rails.cache.write('hotels', {}) # Creating empty hotels cache
+      @hotel_ids.each { |hotel_id| save_hotel(hotel_id) } # This method is merging hotels and writing to cache.
+      saved_hotels = Rails.cache.read('hotels') # Read the final cached_hotels
+      Rails.cache.write('hotels', saved_hotels, expires_in: 24.hours) # Setting cache data expiry time to 24 hours
+    end
 
     def process_response(response, supplier)
       @suppliers[supplier[:id]] = []
