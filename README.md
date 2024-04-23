@@ -93,6 +93,8 @@ If we want to fetch data freshly from supplier for every search API call, then s
 ### Configurations
 `use_cached_supplier_data` and `merge_descriptions` configurations are present in `config/application.rb`. They can be toggled as per requirement.
 ### Testing
-Tests are written in `/spec/requests/search_hotel_api_spec.rb` directory. To run the specs -
+Tests are written in `/spec/requests/search_hotel_api_spec.rb` directory. 16 tests covers scenarios like valid payload, invalid payload, fetch multiple hotels by ids, destination, failure handling and error response in case of supplier's API failure etc. The data provided by given supplier endpoints is used to mock the test data.
+
+To run the specs -
 - Login to application's docker container
 - Run `rspec`
