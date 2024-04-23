@@ -30,6 +30,8 @@ module HotelsDataMerge
       @hotel_ids = Set.new
     end
 
+    # Loads hotels data from the each supplier and process it to create Supplier Hotel class objects
+    # Then merges the hotel data to prepare complete dataset and store it in cache.
     def procure_data
       SUPPLIER_FACTORY.each do |supplier|
         response = SupplierApiClient.get_data(supplier[:url_endpoint])
@@ -43,6 +45,8 @@ module HotelsDataMerge
 
     private
 
+    # Processes all the hotels using hotel_ids received by all the suppliers
+    # merges hotels and saves them to cache
     def process_and_write_to_cache
       Rails.cache.write('hotels', {}) # Creating empty hotels cache
       @hotel_ids.each { |hotel_id| save_hotel(hotel_id) } # This method is merging hotels and writing to cache.
@@ -50,6 +54,9 @@ module HotelsDataMerge
       Rails.cache.write('hotels', saved_hotels, expires_in: 24.hours) # Setting cache data expiry time to 24 hours
     end
 
+    # Process response which is an array of hashes, each hash containing the hotel info
+    # Creates hotel objects using corresponding supplier factory which implements abstract_supplier_hotel interface
+    # Keep tracks of all the unique hotel ids and maintains map of supplier_id to list of hotel objects provided by that supplier
     def process_response(response, supplier)
       @suppliers[supplier[:id]] = []
       response.each do |hotel_data|
@@ -59,6 +66,10 @@ module HotelsDataMerge
       end
     end
 
+    # Tries to get saved_hotel from cache using hotel_id (this can give nil too)
+    # Traverses all the supplier hotels one by one
+    # Finds the matching supplier hotel from current supplier using hotel_id
+    # If matching supplier hotel found, creates the hotel (by merging of saved_hotel too if exists) and save it to cache
     def save_hotel(hotel_id)
       @suppliers.each do |_supplier_id, supplier_hotels|
         saved_hotels = Rails.cache.read('hotels')
@@ -72,6 +83,9 @@ module HotelsDataMerge
       end
     end
 
+    # Creates new hotel object by using saved_hotel and supplier_hotel object
+    # If saved_hotel exists, merges both the hotels as per merging rules
+    # If doesn't exists, creates new hotel as per supplier_hotel object only
     def merge_hotels(saved_hotel, supplier_hotel, hotel_id)
       hotel = Hotel.new
       hotel.id = hotel_id
