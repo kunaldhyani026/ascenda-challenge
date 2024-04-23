@@ -54,7 +54,7 @@ class HotelsController < ApplicationController
     return render_error('invalid_request', 'invalid_request_error', 'Either hotels or destination parameters are required', 400) if !hotels.present? && !destination.present?
     return render_error('invalid_request', 'invalid_request_error', 'hotels parameter should be an array with all string ids', 400) if hotels.present? && (!hotels.is_a?(Array) || !hotels.all? { |id| id.is_a?(String) })
 
-    render_error('invalid_request', 'invalid_request_error', 'destination should be a integer', 400) if destination.present? && !destination.is_a?(Integer)
+    render_error('invalid_request', 'invalid_request_error', 'destination paramter should be an integer', 400) if destination.present? && !destination.is_a?(Integer)
   end
 
   # Helper method renders errors with the specified message, type and status code
