@@ -1,30 +1,27 @@
 FROM ruby:3.1.0
 
+# Create working directory in the container
 RUN mkdir /ascenda-challenge
+
+# Set the working directory in the container
 WORKDIR /ascenda-challenge
 
+# Get update
 RUN apt-get update
 
-# BUILD DOCKER IMAGE ascenda-challenge
-# docker build -t 'ascenda-challenge' -f /path/to/local/code/Dockerfile .
+# Copy Gemfile and Gemfile.lock into the container
+COPY Gemfile Gemfile.lock ./
 
-# BUILD CONTAINER ascenda-challenge
-# docker run --expose 3000 -p 3000:3000 --name ascenda-challenge -it -v /path/to/local/code:/ascenda-challenge -d ascenda-challenge
+# Install dependencies using bundler
+RUN bundle install
 
-# START CONTAINER ascenda-challenge
-# docker start ascenda-challenge
+# Copy the rest of the application code into the container
+COPY . .
 
-# LOG IN TO CONTAINER ascenda-challenge
-# docker exec -it ascenda-challenge bash
+# Expose port 3000 to the outside world
+EXPOSE 3000
 
-# RUN FOLLOWING COMMANDS
-#   - bundle install
-#   - rails db:migrate RAILS_ENV=development
-#   - apt-get -y install --no-install-recommends sqlite3 //optional but helps in visualizing db data
-#   - rails db:seed // optional, to populate developement data
-#   - rspec // optional, to check that all test cases are passing
-
-# RUN rails server
-# rails s -b 0.0.0.0 -p 3000
+# Command to start the Rails server
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
 
 # APIs accessible at: http://localhost:3000/
